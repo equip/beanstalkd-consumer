@@ -52,9 +52,37 @@ BEANSTALKD_CONSUMER="Acme\\FooConsumer" ./bin/beanstalkd-consumer
 
 ## Configuration
 
-These environmental variables may be used to configure the command line consumer.
+These environmental variables may be used to configure the runner.
 
 * `BEANSTALKD_CONSUMER` - fully-qualified name of a PHP class implementing [`ConsumerInterface`](https://github.com/equip/beanstalkd-consumer/tree/master/src/ConsumerInterface.php) to consume jobs
 * `BEANSTALKD_HOST` - hostname of the beanstalkd server, defaults to `'127.0.0.1'`
 * `BEANSTALKD_PORT` - port on which the beanstalkd server listens, defaults to `11300`
 * `BEANSTALKD_TUBE` - tube from which the consumer should consume jobs, defaults to `'default'`
+
+## Consumer Dependencies
+
+By default, [Auryn](https://github.com/rdlowrey/Auryn) is used internally as a resolver to create consumer instances. As such, with some additional code, it can be used to inject dependencies into consumers as well.
+
+In order to apply any additional [configurations](http://equipframework.readthedocs.org/en/latest/#configuration) needed for consumers to the Auryn [`Injector`](https://github.com/rdlowrey/auryn/blob/master/lib/Injector.php) instance in use, a custom runner must be written. It will likely look familiar similar to the [stock runner](https://github.com/equip/beanstalkd-consumer/blob/master/bin/beanstalkd-consumer) except that, in addition to the [`DefaultConfigurationSet`](https://github.com/equip/beanstalkd-consumer/blob/master/src/Configuration/DefaultConfigurationSet.php) class that establishes a basic level of configuration for the runner, it will also apply any configurations that consumers require. This can be done using a subclass of [`ConfigurationSet`](https://github.com/equip/framework/blob/master/src/Configuration/ConfigurationSet.php) as shown in the example below.
+
+```php
+namespace Acme;
+
+use Equip\BeanstalkdConsumer\Configuration\DefaultConfigurationSet;
+use Equip\Configuration\ConfigurationSet;
+
+class Configuration extends ConfigurationSet
+{
+    public function __construct()
+    {
+        parent::__construct([
+            DefaultConfigurationSet::class,
+            FooConfiguration::class,
+            BarConfiguration::class,
+            // etc.
+        ]);
+    }
+}
+```
+
+The only needed difference between the stock and custom runners would be that the class shown above is used instead of [`DefaultConfigurationSet`](https://github.com/equip/beanstalkd-consumer/blob/master/src/Configuration/DefaultConfigurationSet.php) when configuring the Auryn [`Injector`](https://github.com/rdlowrey/auryn/blob/master/lib/Injector.php) instance.
