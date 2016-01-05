@@ -1,0 +1,29 @@
+{
+    "name": "equip/beanstalkd-consumer",
+    "description": "Small library for writing command line beanstalkd consumers",
+    "type": "library",
+    "license": "MIT",
+    "prefer-stable": true,
+    "require": {
+        "aura/cli": "^2",
+        "pda/pheanstalk": "^3",
+        "equip/framework": "^0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Equip\\BeanstalkdConsumer\\": "src"
+        }
+    },
+    "require-dev": {
+        "phake/phake": "^2",
+        "phpunit/phpunit": "^4"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "EquipTests\\BeanstalkdConsumer\\": "tests"
+        }
+    },
+    "bin": [
+        "bin/beanstalkd-consumer"
+    ]
+}
