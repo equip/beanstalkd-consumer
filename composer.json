@@ -7,7 +7,7 @@
     "require": {
         "aura/cli": "^2",
         "pda/pheanstalk": "^3",
-        "equip/framework": "^0"
+        "equip/framework": "^1"
     },
     "autoload": {
         "psr-4": {
