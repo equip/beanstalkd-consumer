@@ -4,8 +4,8 @@ namespace EquipTests\BeanstalkdConsumer;
 
 use Aura\Cli\Stdio;
 use Aura\Cli\Context;
-use Aura\Cli\Context\Env;
 use Aura\Cli\Status;
+use Equip\Env;
 use Phake;
 use Relay\ResolverInterface;
 use Pheanstalk\Job as PheanstalkJob;
@@ -66,13 +66,12 @@ class DaemonTest extends \PHPUnit_Framework_TestCase
         $this->resolver = Phake::mock(ResolverInterface::class);
         $this->stdio = Phake::mock(Stdio::class);
         $this->env = Phake::mock(Env::class);
-        $context = Phake::mock(Context::class);
-        Phake::when($context)->__get('env')->thenReturn($this->env);
+        Phake::when($this->env)->getValue(Daemon::TUBE_KEY, 'default')->thenReturn('default');
         $this->pheanstalk = Phake::mock(Pheanstalk::class);
         $this->daemon = new Daemon(
             $this->resolver,
             $this->stdio,
-            $context,
+            $this->env,
             $this->pheanstalk
         );
         $this->daemon->setListener(function () {
@@ -82,7 +81,6 @@ class DaemonTest extends \PHPUnit_Framework_TestCase
 
     public function testRunWithoutConsumer()
     {
-        $this->setTube();
         $result = $this->daemon->run();
         $this->assertSame(Status::USAGE, $result);
         Phake::verify($this->stdio)->outln('<<red>>BEANSTALKD_CONSUMER environmental variable is not set<<reset>>');
@@ -90,7 +88,6 @@ class DaemonTest extends \PHPUnit_Framework_TestCase
 
     public function testRunWithNonexistentConsumer()
     {
-        $this->setTube();
         $this->setConsumer('NonExistentClass');
         $result = $this->daemon->run();
         $this->assertSame(Status::DATAERR, $result);
@@ -99,7 +96,6 @@ class DaemonTest extends \PHPUnit_Framework_TestCase
 
     public function testRunWithInvalidConsumer()
     {
-        $this->setTube();
         $this->setConsumer('\stdClass');
         $result = $this->daemon->run();
         $this->assertSame(Status::DATAERR, $result);
@@ -167,7 +163,7 @@ class DaemonTest extends \PHPUnit_Framework_TestCase
 
     private function setTube()
     {
-        Phake::when($this->env)->get('BEANSTALKD_TUBE')->thenReturn($this->tube);
+        Phake::when($this->env)->getValue(Daemon::TUBE_KEY, 'default')->thenReturn($this->tube);
     }
 
     private function verifyTube()
@@ -177,7 +173,8 @@ class DaemonTest extends \PHPUnit_Framework_TestCase
 
     private function setConsumer($consumer)
     {
-        Phake::when($this->env)->get('BEANSTALKD_CONSUMER')->thenReturn($consumer);
+        Phake::when($this->env)->hasValue(Daemon::CONSUMER_KEY)->thenReturn(true);
+        Phake::when($this->env)->getValue(Daemon::CONSUMER_KEY)->thenReturn($consumer);
     }
 
     private function getConsumer()
