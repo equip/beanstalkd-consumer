@@ -87,10 +87,11 @@ class Daemon
         $consumer = call_user_func($this->resolver, $class);
 
         while (call_user_func($this->listener)) {
-            $job = $this->pheanstalk->reserve();
-            if (!$job) {
+            $reserved = $this->pheanstalk->reserve();
+            if (!$reserved) {
                 continue;
             }
+            $job = new Job($reserved->getId(), $reserved->getData());
 
             try {
                 $result = $consumer->consume($job);

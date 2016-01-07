@@ -2,8 +2,6 @@
 
 namespace Equip\BeanstalkdConsumer;
 
-use Pheanstalk\Job;
-
 interface ConsumerInterface
 {
     /**
