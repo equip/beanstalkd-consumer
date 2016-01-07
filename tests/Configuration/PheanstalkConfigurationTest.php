@@ -3,8 +3,8 @@
 namespace EquipTests\BeanstalkdConsumer\Configuration;
 
 use Auryn\Injector;
-use Pheanstalk\Pheanstalk;
 use Equip\BeanstalkdConsumer\Configuration\PheanstalkConfiguration;
+use Pheanstalk\Pheanstalk;
 
 class PheanstalkConfigurationTest extends \PHPUnit_Framework_TestCase
 {

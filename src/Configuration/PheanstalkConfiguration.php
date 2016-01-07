@@ -12,15 +12,21 @@ class PheanstalkConfiguration implements ConfigurationInterface
     const HOST_KEY = 'BEANSTALKD_HOST';
     const PORT_KEY = 'BEANSTALKD_PORT';
 
-    public function apply(Injector $injector)
+    /**
+     * @var Env
+     */
+    private $env;
+
+    public function __construct(Env $env)
     {
-        $injector->delegate(Pheanstalk::class, [$this, 'getPheanstalk']);
+        $this->env = $env;
     }
 
-    public function getPheanstalk(Env $env)
+    public function apply(Injector $injector)
     {
-        $host = $env->getValue(self::HOST_KEY, '127.0.0.1');
-        $port = $env->getValue(self::PORT_KEY, 11300);
-        return new Pheanstalk($host, $port);
+        $injector->define(Pheanstalk::class, [
+            ':host' => $this->env->getValue(self::HOST_KEY, '127.0.0.1'),
+            ':port' => $this->env->getValue(self::PORT_KEY, 11300),
+        ]);
     }
 }
