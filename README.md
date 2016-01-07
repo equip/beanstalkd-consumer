@@ -12,7 +12,7 @@ composer require equip/beanstalkd-consumer
 
 ## Writing Consumers
 
-A consumer is a PHP class that implements [`ConsumerInterface`](https://github.com/equip/beanstalkd-consumer/tree/master/src/ConsumerInterface.php) to process jobs received from beanstalkd, each of which is represented by an instance of the [Pheanstalk](https://github.com/pda/pheanstalk) [`Job`](https://github.com/pda/pheanstalk/blob/master/src/Job.php) class.
+A consumer is a PHP class that implements [`ConsumerInterface`](https://github.com/equip/beanstalkd-consumer/tree/master/src/ConsumerInterface.php) to process jobs received from beanstalkd, each of which is represented by an instance of the [`Job`](https://github.com/equip/beanstalkd-consumer/blob/master/src/Job.php) class.
 
 Here's an example of a consumer implementation.
 
@@ -20,7 +20,7 @@ Here's an example of a consumer implementation.
 namespace Acme;
 
 use Equip\BeanstalkConsumer\ConsumerInterface;
-use Pheanstalk\Job;
+use Equip\BeanstalkConsumer\Job;
 
 class FooConsumer implements ConsumerInterface
 {

@@ -8,10 +8,11 @@ use Aura\Cli\Context\Env;
 use Aura\Cli\Status;
 use Phake;
 use Relay\ResolverInterface;
-use Pheanstalk\Job;
+use Pheanstalk\Job as PheanstalkJob;
 use Pheanstalk\Pheanstalk;
 use Equip\BeanstalkdConsumer\ConsumerInterface;
 use Equip\BeanstalkdConsumer\Daemon;
+use Equip\BeanstalkdConsumer\Job;
 
 class DaemonTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,6 +45,16 @@ class DaemonTest extends \PHPUnit_Framework_TestCase
      * @var string
      */
     private $tube = 'foo';
+
+    /**
+     * @var int
+     */
+    private $job_id = 2;
+
+    /**
+     * @var string
+     */
+    private $job_data = 'bar';
 
     /**
      * @var boolean
@@ -180,8 +191,10 @@ class DaemonTest extends \PHPUnit_Framework_TestCase
 
     private function getJob()
     {
-        $mock = Phake::mock(Job::class);
+        $mock = Phake::mock(PheanstalkJob::class);
+        Phake::when($mock)->getId()->thenReturn($this->job_id);
+        Phake::when($mock)->getData()->thenReturn($this->job_data);
         Phake::when($this->pheanstalk)->reserve()->thenReturn($mock);
-        return $mock;
+        return $this->isInstanceOf(Job::class);
     }
 }
