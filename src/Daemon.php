@@ -106,5 +106,7 @@ class Daemon
 
             $this->pheanstalk->delete($job);
         }
+
+        return Status::SUCCESS;
     }
 }
