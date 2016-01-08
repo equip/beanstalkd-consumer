@@ -110,7 +110,8 @@ class DaemonTest extends \PHPUnit_Framework_TestCase
     {
         $this->setTube();
         $consumer = $this->getConsumer();
-        $this->daemon->run();
+        $result = $this->daemon->run();
+        $this->assertSame(Status::SUCCESS, $result);
         $this->verifyTube();
         Phake::verify($consumer, Phake::never())->consume(Phake::anyParameters());
     }
@@ -138,7 +139,8 @@ class DaemonTest extends \PHPUnit_Framework_TestCase
         $job = $this->getJob();
         $consumer = $this->getConsumer();
         Phake::when($consumer)->consume($job)->thenReturn(false);
-        $this->daemon->run();
+        $result = $this->daemon->run();
+        $this->assertSame(Status::SUCCESS, $result);
         $this->verifyTube();
         Phake::verify($this->pheanstalk)->release($job);
     }
@@ -149,7 +151,8 @@ class DaemonTest extends \PHPUnit_Framework_TestCase
         $job = $this->getJob();
         $consumer = $this->getConsumer();
         Phake::when($consumer)->consume($job)->thenReturn(true);
-        $this->daemon->run();
+        $result = $this->daemon->run();
+        $this->assertSame(Status::SUCCESS, $result);
         $this->verifyTube();
         Phake::verify($this->pheanstalk)->delete($job);
     }
@@ -160,7 +163,8 @@ class DaemonTest extends \PHPUnit_Framework_TestCase
         $job = $this->getJob();
         $consumer = $this->getConsumer();
         Phake::when($consumer)->consume($job)->thenReturn(true);
-        $this->daemon->run();
+        $result = $this->daemon->run();
+        $this->assertSame(Status::SUCCESS, $result);
         $this->verifyTube();
         Phake::verify($this->pheanstalk)->delete($job);
     }
