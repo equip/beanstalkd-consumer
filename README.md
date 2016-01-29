@@ -41,7 +41,7 @@ To use the consumer shown in the last section, be sure its namespace is included
 If this library is installed as a project dependency:
 
 ```
-BEANSTALKD_CONSUMER="Acme\\FooConsumer" ./vendor/bin/beanstalk-consumer
+BEANSTALKD_CONSUMER="Acme\\FooConsumer" ./vendor/bin/beanstalkd-consumer
 ```
 
 If this library is installed as a repository clone:
