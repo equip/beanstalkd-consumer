@@ -1,5 +1,11 @@
 # Equip Beanstalkd Consumer
 
+[![Latest Stable Version](https://img.shields.io/packagist/v/equip/beanstalkd-consumer.svg)](https://packagist.org/packages/equip/beanstalkd-consumer)
+[![License](https://img.shields.io/packagist/l/equip/beanstalkd-consumer.svg)](https://github.com/equip/beanstalkd-consumer/blob/master/LICENSE)
+[![Build Status](https://travis-ci.org/equip/beanstalkd-consumer.svg)](https://travis-ci.org/equip/beanstalkd-consumer)
+[![Code Coverage](https://scrutinizer-ci.com/g/equip/beanstalkd-consumer/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/equip/beanstalkd-consumer/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/equip/beanstalkd-consumer/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/equip/beanstalkd-consumer/?branch=master)
+
 A small library for writing command line [beanstalkd](http://kr.github.io/beanstalkd/) consumers in [Equip](https://github.com/equip/framework) applications.
 
 ## Installation
