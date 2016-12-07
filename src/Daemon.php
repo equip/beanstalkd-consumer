@@ -3,13 +3,16 @@
 namespace Equip\BeanstalkdConsumer;
 
 use Aura\Cli\Stdio;
-use Aura\Cli\Context;
 use Aura\Cli\Status;
+use Equip\Env;
 use Relay\ResolverInterface;
 use Pheanstalk\Pheanstalk;
 
 class Daemon
 {
+    const TUBE_KEY = 'BEANSTALKD_TUBE';
+    const CONSUMER_KEY = 'BEANSTALKD_CONSUMER';
+
     /**
      * @var ResolverInterface
      */
@@ -21,9 +24,9 @@ class Daemon
     private $stdio;
 
     /**
-     * @var Context
+     * @var Env
      */
-    private $context;
+    private $env;
 
     /**
      * @var Pheanstalk
@@ -38,18 +41,18 @@ class Daemon
     /**
      * @param ResolverInterface $resolver
      * @param Stdio $stdio
-     * @param Context $context
+     * @param Env $env
      * @param Pheanstalk $pheanstalk
      */
     public function __construct(
         ResolverInterface $resolver,
         Stdio $stdio,
-        Context $context,
+        Env $env,
         Pheanstalk $pheanstalk
     ) {
         $this->resolver = $resolver;
         $this->stdio = $stdio;
-        $this->context = $context;
+        $this->env = $env;
         $this->pheanstalk = $pheanstalk;
         $this->listener = function () { return true; };
     }
@@ -67,13 +70,12 @@ class Daemon
      */
     public function run()
     {
-        $env = $this->context->env;
-        $tube = $env->get('BEANSTALKD_TUBE') ?: 'default';
-        $class = $env->get('BEANSTALKD_CONSUMER');
-        if (!$class) {
+        if (!$this->env->hasValue(self::CONSUMER_KEY)) {
             $this->stdio->outln('<<red>>BEANSTALKD_CONSUMER environmental variable is not set<<reset>>');
             return Status::USAGE;
         }
+
+        $class = $this->env->getValue(self::CONSUMER_KEY);
         if (!class_exists($class)) {
             $this->stdio->outln(sprintf('<<red>>BEANSTALKD_CONSUMER does not reference a locatable class: %s<<reset>>', $class));
             return Status::DATAERR;
@@ -83,6 +85,7 @@ class Daemon
             return Status::DATAERR;
         }
 
+        $tube = $this->env->getValue(self::TUBE_KEY, 'default');
         $this->pheanstalk->watchOnly($tube);
         $consumer = call_user_func($this->resolver, $class);
 

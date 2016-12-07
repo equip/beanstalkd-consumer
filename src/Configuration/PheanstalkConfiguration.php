@@ -2,23 +2,31 @@
 
 namespace Equip\BeanstalkdConsumer\Configuration;
 
-use Aura\Cli\Context;
 use Auryn\Injector;
-use Pheanstalk\Pheanstalk;
 use Equip\Configuration\ConfigurationInterface;
+use Equip\Env;
+use Pheanstalk\Pheanstalk;
 
 class PheanstalkConfiguration implements ConfigurationInterface
 {
-    public function apply(Injector $injector)
+    const HOST_KEY = 'BEANSTALKD_HOST';
+    const PORT_KEY = 'BEANSTALKD_PORT';
+
+    /**
+     * @var Env
+     */
+    private $env;
+
+    public function __construct(Env $env)
     {
-        $injector->delegate(Pheanstalk::class, [$this, 'getPheanstalk']);
+        $this->env = $env;
     }
 
-    public function getPheanstalk(Context $context)
+    public function apply(Injector $injector)
     {
-        $env = $context->env;
-        $host = $env->get('BEANSTALKD_HOST') ?: '127.0.0.1';
-        $port = $env->get('BEANSTALKD_PORT') ?: 11300;
-        return new Pheanstalk($host, $port);
+        $injector->define(Pheanstalk::class, [
+            ':host' => $this->env->getValue(self::HOST_KEY, '127.0.0.1'),
+            ':port' => $this->env->getValue(self::PORT_KEY, 11300),
+        ]);
     }
 }
